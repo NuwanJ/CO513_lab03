@@ -2,7 +2,7 @@ const { User } = require('./User');
 const { BaseStation } = require('./BaseStation');
 const { CallGenerator } = require('./CallGenerator');
 
-const NUM_USERS = 1;
+const NUM_USERS = 10;
 const SIG_STRENGHT = -100; // in dBs
 
 class Simulator {
@@ -26,6 +26,8 @@ class Simulator {
 
         // console.log('Users:', this.users);
         // console.log('BaseStations', this.bs);
+
+        const cg = new CallGenerator(this.users, this.bs, config);
     }
 }
 

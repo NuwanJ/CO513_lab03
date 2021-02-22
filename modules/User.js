@@ -8,6 +8,8 @@ class User {
     constructor(id, simulator) {
         this.id = id;
         this.simulator = simulator;
+        this._status = 'IDEAL';
+
         config = simulator.config;
 
         x = this.getRandomInt(config.width);
@@ -21,6 +23,14 @@ class User {
         }, MOVE_INTERVAL);
     }
 
+    get status() {
+        return this._status;
+    }
+
+    set status(s) {
+        this._status = s;
+    }
+
     move = () => {
         // Mobility Model: Moving toward a random direction
         // const dTheta = this.getRandomInt(30) - 15; // only 15 deg change at step
@@ -30,7 +40,7 @@ class User {
         x = this.coordinateLimit(x + dx, 0, config.width);
         y = this.coordinateLimit(y + dy, 0, config.height);
 
-        console.log(`${this.id} moving: (${x},${y}) ^${heading}`);
+        // console.log(`${this.id} moving: (${x},${y}) ^${heading}`);
     };
 
     getRandomInt = (max) => {
