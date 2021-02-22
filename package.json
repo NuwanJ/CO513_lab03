@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "bundle": "browserify index.js -o dist/index.js"
   },
   "keywords": [
     "Networking",
@@ -21,6 +22,9 @@
     "delay": "1500"
   },
   "dependencies": {
+    "bundle": "^2.1.0",
+    "jquery": "^3.5.1",
+    "jsdom": "^16.4.0",
     "nodemon": "^2.0.7"
   }
 }

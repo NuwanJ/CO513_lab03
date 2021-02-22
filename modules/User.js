@@ -1,7 +1,7 @@
-const MOVE_INTERVAL = 1000;
-const SPEED = 100; // distance per 'MOVE_INTERVAL'
+const MOVE_INTERVAL = 100;
+const SPEED = 10; // distance per 'MOVE_INTERVAL'
 
-let x, y, heading;
+// let x, y, heading;
 let config;
 
 class User {
@@ -12,15 +12,22 @@ class User {
 
         config = simulator.config;
 
-        x = this.getRandomInt(config.width);
-        y = this.getRandomInt(config.height);
-        heading = this.getRandomInt(359); // [0,359]
+        this.x = this.getRandomInt(config.width);
+        this.y = this.getRandomInt(config.height);
+        this.heading = this.getRandomInt(359); // [0,359]
 
         const loop = setInterval(() => {
             this.move();
 
-            this.simulator.bs[0].rssi(x, y);
+            this.simulator.bs[0].rssi(this.x, this.y);
         }, MOVE_INTERVAL);
+    }
+    get getX() {
+        return this.x;
+    }
+
+    get getY() {
+        return this.y;
     }
 
     get status() {
@@ -34,11 +41,11 @@ class User {
     move = () => {
         // Mobility Model: Moving toward a random direction
         // const dTheta = this.getRandomInt(30) - 15; // only 15 deg change at step
-        const dx = SPEED * Math.cos(heading * (Math.PI / 180));
-        const dy = SPEED * Math.cos(heading * (Math.PI / 180));
+        const dx = SPEED * Math.cos(this.heading * (Math.PI / 180));
+        const dy = SPEED * Math.cos(this.heading * (Math.PI / 180));
 
-        x = this.coordinateLimit(x + dx, 0, config.width);
-        y = this.coordinateLimit(y + dy, 0, config.height);
+        this.x = this.coordinateLimit(this.x + dx, 0, config.width);
+        this.y = this.coordinateLimit(this.y + dy, 0, config.height);
 
         // console.log(`${this.id} moving: (${x},${y}) ^${heading}`);
     };
@@ -50,11 +57,11 @@ class User {
     coordinateLimit(coord, min, max) {
         if (coord < min) {
             // Hit the border > change heading
-            heading = this.getRandomInt(360);
+            this.heading = this.getRandomInt(360);
             return min;
         } else if (coord > max) {
             // Hit the border > change heading
-            heading = this.getRandomInt(360);
+            this.heading = this.getRandomInt(360);
             return max;
         }
         return Math.round(coord);
