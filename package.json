@@ -1,0 +1,26 @@
+{
+  "name": "lab03",
+  "version": "1.0.0",
+  "description": "Lab3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "Networking",
+    "Simulation"
+  ],
+  "author": "Nuwan Jaliyagoda",
+  "license": "MIT",
+  "nodemonConfig": {
+    "ignore": [
+      "test/*"
+    ],
+    "delay": "1500"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
