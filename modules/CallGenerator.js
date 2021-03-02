@@ -13,37 +13,50 @@ class CallGenerator {
 
         setInterval(function() {
             // make some calls to keep 25% users active
-
             while (that.activeUsers < that.userCount * ACTIVE_USER_PRECENTAGE) {
                 const u = that.getRandomIdealUser(that);
-                const duration = that.getRandomInt(30, 120); // 30s - 120s
-                that.makeACall(u, duration);
-                console.log(`call_start:\t ${u.id} > ${duration}s`);
+
+                if (u != null) {
+                    const duration = that.getRandomInt(30, 120); // 30s - 120s
+                    that.makeACall(u, duration);
+                }
             }
 
-            console.log('active calls:', that.activeUsers);
+            // console.log('active calls:', that.activeUsers);
         }, CALL_INTERVAL);
     }
 
     getRandomIdealUser = (that) => {
         // Get a random ideal user
         let id = that.getRandomInt(0, that.userCount - 1);
-        while (that.users[id] == undefined || that.users[id].status != 'IDEAL') {
+        let tryCount = 0;
+        while (
+            (that.users[id] == undefined || that.users[id].inCall == true) &&
+            tryCount < 10
+        ) {
             // console.log(`${id} > ${that.users[id].status}`);
             id = that.getRandomInt(0, that.userCount - 1);
+            tryCount++;
         }
-        return that.users[id];
+        return tryCount < 10 ? that.users[id] : null;
     };
 
+    // NOTE: duration is simulated x10 times faster in here
     makeACall = (user, duration) => {
-        this.activeUsers += 1;
-        user.status = 'IN_CALL';
-        const that = this;
-        setTimeout(function() {
-            that.activeUsers -= 1;
-            user.status = 'IDEAL';
-            console.log(`call_end:\t ${user.id}`);
-        }, duration * 100);
+        if (user.connected == false) {
+            // Mobile is not reachable
+        } else {
+            // console.log(`call_start:\t ${user.id} > ${duration}s`);
+
+            this.activeUsers += 1;
+            user.inCall = true;
+            const that = this;
+            setTimeout(function() {
+                that.activeUsers -= 1;
+                user.inCall = false;
+                // console.log(`call_end:\t ${user.id}`);
+            }, duration * 100);
+        }
     };
 
     getRandomInt = (min, max) => {
