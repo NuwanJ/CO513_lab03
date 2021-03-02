@@ -1,5 +1,5 @@
 const fC = 1800; // in MHz
-const TX_POWER = 0;
+const TX_POWER = 10;
 const MAX_USERS = 20;
 
 const log10 = Math.log10;

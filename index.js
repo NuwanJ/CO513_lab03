@@ -1,7 +1,5 @@
 const { Simulator } = require('./modules/Simulator');
 
-const simulationTime = 5000;
-
 const config = {
     width: 10000,
     height: 10000,
@@ -12,4 +10,4 @@ const config = {
     ]
 };
 
-const simulator = new Simulator(simulationTime, config);
+const simulator = new Simulator(config);

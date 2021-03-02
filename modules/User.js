@@ -10,6 +10,7 @@ class User {
         this.simulator = simulator;
         this._status = 'IDEAL';
         this._baseStationId = null;
+
         this._inCall = false;
         this.connected = false;
 
@@ -24,6 +25,12 @@ class User {
         const loop = setInterval(() => {
             this.move();
             this.updateStatus();
+
+            let rssi = [];
+            for (let i = 0; i < this.simulator.config.bs.length; i++) {
+                rssi[i] = this.simulator.bs[i].rssi(this.x, this.y);
+            }
+            console.log(this.id, rssi);
         }, MOVE_INTERVAL);
     }
 
@@ -35,10 +42,12 @@ class User {
         if (this._baseStationId != null) {
             // If connected to a BS, lets check signal strength and
             // disconnect from it if it is so far
+
             const distForCurrentBS = this.simulator.bs[this._baseStationId].dist(
                 this.x,
                 this.y
             );
+
             if (distForCurrentBS > this.simulator.bs[this._baseStationId].txDist) {
                 // To far, disconnect
                 this.simulator.bs[this._baseStationId].disconnect(this.id);
@@ -51,6 +60,7 @@ class User {
 
         if (this.connected == false) {
             // Not connected to any BS. Lets try to connect
+
             for (let i = 0; i < this.simulator.config.bs.length; i++) {
                 dist[i] = this.simulator.bs[i].dist(this.x, this.y);
 
@@ -110,11 +120,11 @@ class User {
     coordinateLimit(coord, min, max) {
         if (coord < min) {
             // Hit the border > change heading
-            this.heading = this.getRandomInt(360);
+            this.heading = this.getRandomInt(350);
             return min;
         } else if (coord > max) {
             // Hit the border > change heading
-            this.heading = this.getRandomInt(360);
+            this.heading = this.getRandomInt(350);
             return max;
         }
         return Math.round(coord);

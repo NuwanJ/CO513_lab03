@@ -2,11 +2,10 @@ const { User } = require('./User');
 const { BaseStation } = require('./BaseStation');
 const { CallGenerator } = require('./CallGenerator');
 
-const NUM_USERS = 100;
+const NUM_USERS = 1;
 
 class Simulator {
-    constructor(simulationTime, config) {
-        this.simulationTime = simulationTime;
+    constructor(config) {
         this.config = config;
         this.users = {};
         this.bs = {};
@@ -27,7 +26,6 @@ class Simulator {
 
         // console.log('Users:', this.users);
         // console.log('BaseStations', this.bs);
-
         const callGenerator = new CallGenerator(this.users, this.bs, config);
 
         var drawSimulation = process.argv[2];
@@ -39,14 +37,15 @@ class Simulator {
             }, 100);
         }
 
-        const statusLoop = setInterval(() => {
-            let connectedUsers = [];
-
-            for (let i = 0; i < config.bs.length; i++) {
-                connectedUsers[i] = this.bs[i].users;
-            }
-            console.log('--------------\n', connectedUsers);
-        }, 2000);
+        // // Show number
+        // const statusLoop = setInterval(() => {
+        //     let connectedUsers = [];
+        //
+        //     for (let i = 0; i < config.bs.length; i++) {
+        //         connectedUsers[i] = this.bs[i].users;
+        //     }
+        //     console.log(connectedUsers);
+        // }, 2000);
     }
 
     // Only with HTML  rendering support
@@ -75,12 +74,12 @@ class Simulator {
 
                 if (users[i].inCall == false) {
                     if (users[i].connected == false) {
-                        ctx.fillStyle = '#00FF00';
+                        ctx.fillStyle = '#FF0000';
                     } else {
                         ctx.fillStyle = '#ffbf00';
                     }
                 } else if (users[i].inCall) {
-                    ctx.fillStyle = '#FF0000';
+                    ctx.fillStyle = '#00FF00';
                 }
                 ctx.fillRect(x - 5, y - 5, 10, 10);
                 // console.log(x, y);
