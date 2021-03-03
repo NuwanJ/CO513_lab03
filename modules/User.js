@@ -3,18 +3,18 @@ const SPEED = 50; // distance per 'MOVE_INTERVAL'
 
 // let x, y, heading;
 let config;
+let simulator;
 
 class User {
-    constructor(id, simulator) {
+    constructor(id, sim) {
+        simulator = sim;
+        config = simulator.config;
+
         this.id = id;
-        this.simulator = simulator;
+        this._connected = false;
         this._status = 'IDEAL';
         this._baseStationId = null;
-
         this._inCall = false;
-        this.connected = false;
-
-        config = simulator.config;
 
         this.x = this.getRandomInt(config.width);
         this.y = this.getRandomInt(config.height);
@@ -25,14 +25,30 @@ class User {
         const loop = setInterval(() => {
             this.move();
             this.updateStatus();
-
-            let rssi = [];
-            for (let i = 0; i < this.simulator.config.bs.length; i++) {
-                rssi[i] = this.simulator.bs[i].rssi(this.x, this.y);
-            }
-            console.log(this.id, rssi);
+            this.calculateSINR();
         }, MOVE_INTERVAL);
     }
+
+    calculateSINR = () => {
+        let rssi = [];
+        let pow = [];
+        let sinr = [];
+        let sumRSSI = 0;
+        let sumPow = 0;
+
+        for (let i = 0; i < simulator.config.bs.length; i++) {
+            rssi[i] = simulator.bs[i].rssi(this.x, this.y);
+            pow[i] = Math.pow(10, rssi[i] / 10) / 1000;
+            sumRSSI += rssi[i];
+            sumPow += pow[i];
+        }
+        for (let i = 0; i < rssi.length; i++) {
+            sinr[i] = Math.round((pow[i] / (sumPow - pow[i])) * 100) / 100;
+        }
+        // console.log(this.id, rssi, sumRSSI, sinr);
+
+        return sinr;
+    };
 
     updateStatus = () => {
         // Calculate RSSI and find the best Base station
@@ -43,14 +59,14 @@ class User {
             // If connected to a BS, lets check signal strength and
             // disconnect from it if it is so far
 
-            const distForCurrentBS = this.simulator.bs[this._baseStationId].dist(
+            const distForCurrentBS = simulator.bs[this._baseStationId].dist(
                 this.x,
                 this.y
             );
 
-            if (distForCurrentBS > this.simulator.bs[this._baseStationId].txDist) {
+            if (distForCurrentBS > simulator.bs[this._baseStationId].txDist) {
                 // To far, disconnect
-                this.simulator.bs[this._baseStationId].disconnect(this.id);
+                simulator.bs[this._baseStationId].disconnect(this.id);
                 // console.log(`${this.id} disconnected from ${this._baseStationId}`);
                 this._baseStationId == null;
                 this.connected = false;
@@ -61,14 +77,14 @@ class User {
         if (this.connected == false) {
             // Not connected to any BS. Lets try to connect
 
-            for (let i = 0; i < this.simulator.config.bs.length; i++) {
-                dist[i] = this.simulator.bs[i].dist(this.x, this.y);
+            for (let i = 0; i < simulator.config.bs.length; i++) {
+                dist[i] = simulator.bs[i].dist(this.x, this.y);
 
-                if (dist[i] < this.simulator.bs[i].txDist) {
+                if (dist[i] < simulator.bs[i].txDist) {
                     // Try to connect, First found, first try
-                    if (this.simulator.bs[i].connect(this.id) === true) {
+                    if (simulator.bs[i].connect(this.id) === true) {
                         // Connected
-                        // console.log(dist[i], this.simulator.bs[i].txDist);
+                        // console.log(dist[i], simulator.bs[i].txDist);
                         // console.log(`${this.id} connected to  ${i}`);
                         this.connected = true;
                         this._baseStationId = i;
@@ -158,6 +174,13 @@ class User {
     }
     set connectWith(bs) {
         this._baseStationId = bs;
+    }
+
+    get connected() {
+        return this._connected;
+    }
+    set connected(bs) {
+        this._connected = bs;
     }
 }
 

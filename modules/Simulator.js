@@ -2,7 +2,7 @@ const { User } = require('./User');
 const { BaseStation } = require('./BaseStation');
 const { CallGenerator } = require('./CallGenerator');
 
-const NUM_USERS = 1;
+const NUM_USERS = 100;
 
 class Simulator {
     constructor(config) {
@@ -37,18 +37,29 @@ class Simulator {
             }, 100);
         }
 
-        // // Show number
-        // const statusLoop = setInterval(() => {
-        //     let connectedUsers = [];
-        //
-        //     for (let i = 0; i < config.bs.length; i++) {
-        //         connectedUsers[i] = this.bs[i].users;
-        //     }
-        //     console.log(connectedUsers);
-        // }, 2000);
+        let connectedUsers = [0, 0, 0];
+        let avgUsers = [];
+        let counter = 0;
+
+        // Show average number of connected users in 6s (Equal to 1 min)
+        const statusLoop = setInterval(() => {
+            for (let i = 0; i < config.bs.length; i++) {
+                connectedUsers[i] += this.bs[i].users;
+            }
+            // console.log(counter, connectedUsers);
+            counter++;
+
+            if (counter == 6) {
+                for (let i = 0; i < config.bs.length; i++) {
+                    avgUsers[i] = connectedUsers[i] / counter;
+                }
+                console.log(avgUsers);
+                // counter = 0;
+            }
+        }, 1000);
     }
 
-    // Only with HTML  rendering support
+    // Only with HTML rendering support
     draw = (users, bs) => {
         var c = document.getElementById('myCanvas');
         if (c !== null) {
@@ -76,10 +87,10 @@ class Simulator {
                     if (users[i].connected == false) {
                         ctx.fillStyle = '#FF0000';
                     } else {
-                        ctx.fillStyle = '#ffbf00';
+                        ctx.fillStyle = '#00FF00';
                     }
                 } else if (users[i].inCall) {
-                    ctx.fillStyle = '#00FF00';
+                    ctx.fillStyle = '#ffbf00';
                 }
                 ctx.fillRect(x - 5, y - 5, 10, 10);
                 // console.log(x, y);

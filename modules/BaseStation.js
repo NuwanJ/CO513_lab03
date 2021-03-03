@@ -1,5 +1,5 @@
 const fC = 1800; // in MHz
-const TX_POWER = 10;
+const TX_POWER = 0.5; // in dBm
 const MAX_USERS = 20;
 
 const log10 = Math.log10;
@@ -7,9 +7,12 @@ const log10 = Math.log10;
 class BaseStation {
     constructor(id, x, y, users) {
         // console.log(`id:${id} | x:${x} y:${y}`);
+        this.id = id;
         this.loc = { x: x, y: y };
         this.users = 0;
-        this.txDist = 5000; // TODO: calculate this
+
+        // Max possible transmission distance if RSSI should be greater than -110 dB
+        this.txDist = Math.pow(10, (TX_POWER + 110 + 27.5) / 20) / fC;
     }
 
     rssi = (x, y) => {
@@ -23,6 +26,15 @@ class BaseStation {
 
         return rssi;
     };
+
+    // sinr = (id, rssi) => {
+    //     let sum = rssi.reduce((a, b) => a + b);
+    //     let sinr = [];
+    //     for (let i = 0; i < rssi.length; i++) {
+    //         sinr[i] = Math.round((rssi[id] / (sum - rssi[id])) * 100) / 100;
+    //     }
+    //     return sinr;
+    // };
 
     dist = (x, y) => {
         return Math.round(
