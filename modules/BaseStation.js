@@ -1,5 +1,5 @@
 const fC = 1800; // in MHz
-const TX_POWER = 0.5; // in dBm
+const TX_POWER = 5; // in dBm
 const MAX_USERS = 20;
 
 const log10 = Math.log10;

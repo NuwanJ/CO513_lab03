@@ -24,8 +24,9 @@ class User {
 
         const loop = setInterval(() => {
             this.move();
-            this.updateStatus();
-            this.calculateSINR();
+
+            const { rssi, sinr } = this.calculateSINR();
+            this.updateStatus(rssi, sinr);
         }, MOVE_INTERVAL);
     }
 
@@ -47,29 +48,24 @@ class User {
         }
         // console.log(this.id, rssi, sumRSSI, sinr);
 
-        return sinr;
+        return { rssi, sinr };
     };
 
-    updateStatus = () => {
+    updateStatus = (rssi, sinr) => {
         // Calculate RSSI and find the best Base station
-        let dist = [];
-        let minDist = Number.NEGATIVE_INFINITY;
+        // let dist = [];
+        // let minDist = Number.NEGATIVE_INFINITY;
 
         if (this._baseStationId != null) {
             // If connected to a BS, lets check signal strength and
             // disconnect from it if it is so far
 
-            const distForCurrentBS = simulator.bs[this._baseStationId].dist(
-                this.x,
-                this.y
-            );
-
-            if (distForCurrentBS > simulator.bs[this._baseStationId].txDist) {
-                // To far, disconnect
+            if (rssi[this._baseStationId] < -110) {
+                // Low SINR, disconnect
                 simulator.bs[this._baseStationId].disconnect(this.id);
                 // console.log(`${this.id} disconnected from ${this._baseStationId}`);
                 this._baseStationId == null;
-                this.connected = false;
+                this._connected = false;
                 this._inCall = false; // cut the call
             }
         }
@@ -78,9 +74,7 @@ class User {
             // Not connected to any BS. Lets try to connect
 
             for (let i = 0; i < simulator.config.bs.length; i++) {
-                dist[i] = simulator.bs[i].dist(this.x, this.y);
-
-                if (dist[i] < simulator.bs[i].txDist) {
+                if (rssi[i] > -110 && sinr[i] >= 1) {
                     // Try to connect, First found, first try
                     if (simulator.bs[i].connect(this.id) === true) {
                         // Connected
@@ -90,8 +84,6 @@ class User {
                         this._baseStationId = i;
                         break;
                     }
-                    // minDist = dist[i];
-                    // bestBS = i;
                 }
             }
         }

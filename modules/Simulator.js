@@ -55,6 +55,7 @@ class Simulator {
                 }
                 console.log(avgUsers);
                 // counter = 0;
+                // connectedUsers = [0, 0, 0];
             }
         }, 1000);
     }
