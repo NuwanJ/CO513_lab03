@@ -1,11 +1,11 @@
 {
   "name": "lab03",
   "version": "1.0.0",
-  "description": "Lab3",
+  "description": "CO513 Lab3",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "node index.js no_simulator",
     "dev": "nodemon index.js -- no_simulator",
     "bundle": "browserify index.js -o docs/index.js"
   },
@@ -13,8 +13,8 @@
     "Networking",
     "Simulation"
   ],
-  "author": "Nuwan Jaliyagoda",
   "license": "MIT",
+  "author": "Nuwan Jaliyagoda",
   "nodemonConfig": {
     "ignore": [
       "test/*"

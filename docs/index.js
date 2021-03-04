@@ -192,8 +192,8 @@ const config = {
     height: 10000,
     bs: [
         { x: 100, y: 100 },
-        { x: 9900, y: 100 },
-        { x: 4900, y: 9900 }
+        { x: 10000, y: 100 },
+        { x: 5000, y: 10000 }
     ]
 };
 
@@ -201,7 +201,7 @@ const simulator = new Simulator(config);
 
 },{"./modules/Simulator":5}],3:[function(require,module,exports){
 const fC = 1800; // in MHz
-const TX_POWER = 5; // in dBm
+const TX_POWER = 2.5; // in dBm
 const MAX_USERS = 20;
 
 const log10 = Math.log10;
@@ -501,15 +501,11 @@ class User {
     };
 
     updateStatus = (rssi, sinr) => {
-        // Calculate RSSI and find the best Base station
-        // let dist = [];
-        // let minDist = Number.NEGATIVE_INFINITY;
-
         if (this._baseStationId != null) {
             // If connected to a BS, lets check signal strength and
-            // disconnect from it if it is so far
+            // disconnect from it if it is too weak
 
-            if (rssi[this._baseStationId] < -110) {
+            if (this._connected && rssi[this._baseStationId] < -110) {
                 // Low SINR, disconnect
                 simulator.bs[this._baseStationId].disconnect(this.id);
                 // console.log(`${this.id} disconnected from ${this._baseStationId}`);

@@ -3,14 +3,14 @@ const ACTIVE_USER_PRECENTAGE = 0.25;
 
 class CallGenerator {
     constructor(users, baseStations, config) {
-        console.log('Call generator');
+        console.log('Call generator: enabled');
 
         this.users = users;
         this.bs = baseStations;
         this.activeUsers = 0;
         this.userCount = Object.keys(users).length;
-        const that = this;
 
+        const that = this;
         setInterval(function() {
             // make some calls to keep 25% users active
             while (that.activeUsers < that.userCount * ACTIVE_USER_PRECENTAGE) {
@@ -21,20 +21,17 @@ class CallGenerator {
                     that.makeACall(u, duration);
                 }
             }
-
-            // console.log('active calls:', that.activeUsers);
         }, CALL_INTERVAL);
     }
 
     getRandomIdealUser = (that) => {
-        // Get a random ideal user
+        // Get a random ideal user, return false if no one avaliable
         let id = that.getRandomInt(0, that.userCount - 1);
         let tryCount = 0;
         while (
             (that.users[id] == undefined || that.users[id].inCall == true) &&
             tryCount < 10
         ) {
-            // console.log(`${id} > ${that.users[id].status}`);
             id = that.getRandomInt(0, that.userCount - 1);
             tryCount++;
         }
@@ -47,7 +44,6 @@ class CallGenerator {
             // Mobile is not reachable
         } else {
             // console.log(`call_start:\t ${user.id} > ${duration}s`);
-
             this.activeUsers += 1;
             user.inCall = true;
             const that = this;

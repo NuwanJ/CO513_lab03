@@ -10,9 +10,8 @@ class Simulator {
         this.users = {};
         this.bs = {};
 
-        // Generate users
+        // Generate given number of users
         for (let i = 0; i < NUM_USERS; i++) {
-            // Create users: id, network
             this.users[i] = new User(i, this);
         }
 
@@ -20,14 +19,16 @@ class Simulator {
         for (let i = 0; i < config.bs.length; i++) {
             const bs_data = config.bs[i];
             console.log(bs_data);
-            // id, x, y, users
             this.bs[i] = new BaseStation(i, bs_data.x, bs_data.y, this.users);
         }
 
         // console.log('Users:', this.users);
         // console.log('BaseStations', this.bs);
+
+        // Enables the call generator
         const callGenerator = new CallGenerator(this.users, this.bs, config);
 
+        // Draw the user movements and base stations on HTML canvas
         var drawSimulation = process.argv[2];
         console.log('Simulator: ', drawSimulation);
 
@@ -37,6 +38,7 @@ class Simulator {
             }, 100);
         }
 
+        // --- Reporting -------------------------------------------------------
         let connectedUsers = [0, 0, 0];
         let avgUsers = [];
         let counter = 0;
@@ -60,13 +62,15 @@ class Simulator {
         }, 1000);
     }
 
-    // Only with HTML rendering support
+    // Only with HTML canvas support
     draw = (users, bs) => {
         var c = document.getElementById('myCanvas');
         if (c !== null) {
             var ctx = c.getContext('2d');
 
             ctx.clearRect(0, 0, c.width, c.height);
+
+            // Draw base stations
             for (let i = 0; i < Object.keys(bs).length; i++) {
                 var x = this.bs[i].location.x / 10;
                 var y = this.bs[i].location.y / 10;
@@ -80,6 +84,7 @@ class Simulator {
                 ctx.stroke();
             }
 
+            // Draw users
             for (let i = 0; i < NUM_USERS; i++) {
                 const x = users[i].x / 10;
                 const y = users[i].y / 10;
@@ -94,9 +99,7 @@ class Simulator {
                     ctx.fillStyle = '#ffbf00';
                 }
                 ctx.fillRect(x - 5, y - 5, 10, 10);
-                // console.log(x, y);
             }
-            // ctx.stroke();
         }
     };
 }

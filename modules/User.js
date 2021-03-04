@@ -52,15 +52,11 @@ class User {
     };
 
     updateStatus = (rssi, sinr) => {
-        // Calculate RSSI and find the best Base station
-        // let dist = [];
-        // let minDist = Number.NEGATIVE_INFINITY;
-
         if (this._baseStationId != null) {
             // If connected to a BS, lets check signal strength and
-            // disconnect from it if it is so far
+            // disconnect from it if it is too weak
 
-            if (rssi[this._baseStationId] < -110) {
+            if (this._connected && rssi[this._baseStationId] < -110) {
                 // Low SINR, disconnect
                 simulator.bs[this._baseStationId].disconnect(this.id);
                 // console.log(`${this.id} disconnected from ${this._baseStationId}`);

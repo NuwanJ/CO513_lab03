@@ -1,17 +1,17 @@
 const fC = 1800; // in MHz
-const TX_POWER = 5; // in dBm
+const TX_POWER = 2.5; // in dBm
 const MAX_USERS = 20;
 
 const log10 = Math.log10;
 
 class BaseStation {
     constructor(id, x, y, users) {
-        // console.log(`id:${id} | x:${x} y:${y}`);
         this.id = id;
         this.loc = { x: x, y: y };
         this.users = 0;
 
         // Max possible transmission distance if RSSI should be greater than -110 dB
+        // This is used to plot the circle in visualizer plot.
         this.txDist = Math.pow(10, (TX_POWER + 110 + 27.5) / 20) / fC;
     }
 
@@ -55,7 +55,9 @@ class BaseStation {
     };
 
     disconnect = (user_id) => {
-        this.users -= 1;
+        if (this.users > 0) {
+            this.users -= 1;
+        }
     };
 }
 
