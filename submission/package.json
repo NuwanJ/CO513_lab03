@@ -1,0 +1,30 @@
+{
+  "name": "lab03",
+  "version": "1.0.0",
+  "description": "CO513 Lab3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js no_simulator",
+    "dev": "nodemon index.js -- no_simulator",
+    "bundle": "browserify index.js -o docs/index.js"
+  },
+  "keywords": [
+    "Networking",
+    "Simulation"
+  ],
+  "license": "MIT",
+  "author": "Nuwan Jaliyagoda",
+  "nodemonConfig": {
+    "ignore": [
+      "test/*"
+    ],
+    "delay": "1500"
+  },
+  "dependencies": {
+    "bundle": "^2.1.0",
+    "jquery": "^3.5.1",
+    "jsdom": "^16.4.0",
+    "nodemon": "^2.0.7"
+  }
+}
